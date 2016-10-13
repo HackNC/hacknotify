@@ -9,15 +9,32 @@ def make_parser():
     parser = argparse.ArgumentParser(description="Send notifications to a list @ HackNC")
     parser.add_argument("--group", "-g", required=False, help="The list from config to send notification to")
     parser.add_argument("--subject", "-s", required=False, default=config.DEFAULT_SUBJECT, help="a subject to prepend to the message body")
+    parser.add_argument("--message", "-m", required=False, default=None, help="Message body")
     args = parser.parse_args()
     return args
 
-def waitfor_message():
+def safe_input(string):
+    try:
+        reply = input(string)
+        return reply
+    except EOFError:
+        print("\nEOF")
+        exit(1)
+    except KeyboardInterrupt:
+        print("")
+        exit(1)
+
+def api_send(group, subject, message):
     """
-    Get a message from raw input.
+    API call for sending from code
+    :param group: a string group name from config
+    :param subject: a subject line string
+    :param message: message body string
+    :return: True/False for success/fail
     """
-    message = input("Type a message: ")
-    return message
+    plist = sheetsapi.get_phone_list(group)
+    success = do_send(plist, subject + " " + message)
+    return success
 
 def do_send(numlist, message):
     """
@@ -47,7 +64,7 @@ def do_send(numlist, message):
 def interactive_send(args):
 
     print("--------------------------------------")
-    print("|    HackNC Notification Platform    |")
+    print("|    "+config.EVENT_NAME+" Notification Platform    |")
     print("--------------------------------------")
 
     if args.group:
@@ -58,14 +75,14 @@ def interactive_send(args):
             print("- " + g)
         print("--------------------------------------")
 
-        group = input("Group.....: ")
+        group = safe_input("Group.....: ")
 
     while group not in config.GROUPS.keys():
         print("Group invalid.")
         print("Groups available:")
         for g in config.GROUPS.keys():
             print(" - " + g)
-        group = input("Group.....: ")
+        group = safe_input("Group.....: ")
 
     print("Loading from group...")
     plist = sheetsapi.get_phone_list(group)
@@ -76,7 +93,11 @@ def interactive_send(args):
         print("No entries in list...")
         print("Terminating...")
 
-    message = input("Message...: ")
+    if args.message:
+        message = args.message
+    else:
+        message = safe_input("Message...: ")
+    
     subject = args.subject
 
     print("--------------------------------------")
@@ -94,7 +115,7 @@ def interactive_send(args):
     print("Cost  : " + str(cost))
     print("--------------------------------------")
 
-    confirm = input("OK? y/[n] : ") or "n"
+    confirm = safe_input("OK? y/[n] : ") or "n"
 
     if confirm.lower() == "y":
         print("Queueing...")

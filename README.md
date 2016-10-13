@@ -43,3 +43,21 @@ pip3 install .
 # Running the client
 
 `usage: notify.py [-h] [--group GROUP] [--subject SUBJECT]`
+
+### Examples:
+
+Fully automate send:
+
+`echo "y" | hacknotify --message "This was a triumph" --subject [TEST] --group hackers`
+
+Automate input, but allow interactive confirm:
+
+`hacknotify -m "I'm making a note here - Huge Success" -s [TEST] -g hackers`
+
+Do it all from a python interpreter:
+
+```
+>>> from hacknotify import notify
+>>> notify.api_send("hackers", "[TEST2]", "SPAAAAACE")
+True
+```
