@@ -1,8 +1,9 @@
 import argparse
-import sheetsapi
-import plivoapi
-import config
 import phonenumbers
+
+from . import sheetsapi
+from . import plivoapi
+from . import config
 
 def make_parser():
     parser = argparse.ArgumentParser(description="Send notifications to a list @ HackNC")

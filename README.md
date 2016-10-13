@@ -21,7 +21,7 @@ Create a copy of `config-example.py` called `config.py` and get the necessary in
 ```
 git clone git@github.com:hacknc/hacknotify
 cd hacknotify
-python setup.py install
+pip3 install .
 ```
 
 ### Google API setup

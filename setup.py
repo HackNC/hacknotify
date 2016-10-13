@@ -7,10 +7,9 @@ setup(name='HackNC Notify',
       author_email='bd@unc.edu',
       url='https://hacknc.com/',
       entry_points={
-          'console_scripts': [
-              'hacknotify = notify:main'
-          ]
+          'console_scripts': ['hacknotify=hacknotify.notify:main']
       },
+      packages=['hacknotify'],
       install_requires=[
         'google-api-python-client==1.5.3',
         'httplib2==0.9.2',

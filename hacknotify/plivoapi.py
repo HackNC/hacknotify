@@ -1,5 +1,5 @@
 import plivo
-import config
+from . import config
 
 def trigger_send(liststring, message):
     """
