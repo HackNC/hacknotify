@@ -42,7 +42,7 @@ pip3 install .
 
 # Running the client
 
-`usage: notify.py [-h] [--group GROUP] [--subject SUBJECT]`
+`usage: hacknotify [-h] [--group GROUP] [--subject SUBJECT] [--message MESSAGE]`
 
 ### Examples:
 
