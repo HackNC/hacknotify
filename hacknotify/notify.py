@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import argparse
 import phonenumbers
 
@@ -45,18 +47,22 @@ def do_send(numlist, message):
     invlaid_numbers = 0
     
     for number in numlist:
-        possible_number = number[0]
-        parsed_number = phonenumbers.parse(possible_number, config.DEFAULT_REGION)
-        if phonenumbers.is_possible_number(parsed_number):
-            unicode_number = phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
-            unicode_number = unicode_number.replace(' ', '') # replace the spaces
-            unicode_number = unicode_number.replace('+', '') # replace the +
-            unicode_number = unicode_number.replace('-', '') # replace the -
-            liststring += unicode_number + "<"
-        else:
-            invlaid_numbers += 1
+        try:
+            possible_number = number[0]
+            parsed_number = phonenumbers.parse(possible_number, config.DEFAULT_REGION)
+            if phonenumbers.is_possible_number(parsed_number):
+                unicode_number = phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+                unicode_number = unicode_number.replace(' ', '') # replace the spaces
+                unicode_number = unicode_number.replace('+', '') # replace the +
+                unicode_number = unicode_number.replace('-', '') # replace the -
+                liststring += unicode_number + "<"
+            else:
+                invlaid_numbers += 1
+        except:
+            invlaid_numbers+= 1
 
     # Remove the final "<"
+    print("Invalid count " + str(invlaid_numbers))
     liststring = liststring[:-1]
 
     return plivoapi.trigger_send(liststring, message)
