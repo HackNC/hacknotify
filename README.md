@@ -1,18 +1,18 @@
 # HackNotify
 
-> The SMS notification system for HackNC
+> An SMS notification system built for HackNC
 
-This Project leverages the following APIs:
+This project leverages the following APIs:
 
 * Google Sheets
 * Plivo
 
 # Installation
 
-### Pre-requisites
+### Requirements
 
-* Python3
-* A google account with access to the HackNC Google Drive
+* Python 3
+* A google account with access to a correctly formatted google sheet.
 
 ### Google API setup
 
@@ -37,8 +37,10 @@ cd hacknotify
 Create a copy of `config-example.py` called `config.py` and get the necessary information and API keys.
 
 ```
-pip3 install .
+pip3 install -e .
 ```
+
+You're done!
 
 # Running the client
 
@@ -52,7 +54,7 @@ Fully automate send:
 
 Automate input, but allow interactive confirm:
 
-`hacknotify -m "I'm making a note here - Huge Success" -s [TEST] -g hackers`
+`hacknotify -m "I'm making a note here - Huge success" -s [TEST] -g hackers`
 
 Do it all from a python interpreter:
 

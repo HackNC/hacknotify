@@ -7,6 +7,7 @@ from . import sheetsapi
 from . import plivoapi
 from . import config
 
+
 def make_parser():
     parser = argparse.ArgumentParser(description="Send notifications to a list @ HackNC")
     parser.add_argument("--group", "-g", required=False, help="The list from config to send notification to")
@@ -15,7 +16,13 @@ def make_parser():
     args = parser.parse_args()
     return args
 
+
 def safe_input(string):
+    """
+    Input function with safety for 
+    ^C (CTRL C)
+    ^D (CTRL D)
+    """
     try:
         reply = input(string)
         return reply
@@ -26,7 +33,22 @@ def safe_input(string):
         print("")
         exit(1)
 
-def api_send(group, subject, message):
+
+def get_groups():
+    """
+    Return a list of the possible groups to send to
+    """
+    return config.GROUPS.keys()
+
+
+def get_group(group_name):
+    """
+    Get the actual list of numbers in a group
+    """
+    return sheetsapi.get_phone_list(group_name)
+
+
+def do_send(dirty_list, subject, message):
     """
     API call for sending from code
     :param group: a string group name from config
@@ -34,70 +56,82 @@ def api_send(group, subject, message):
     :param message: message body string
     :return: True/False for success/fail
     """
-    plist = sheetsapi.get_phone_list(group)
-    success = do_send(plist, subject + " " + message)
-    return success
+    valid_list = do_number_parse(dirty_list)
+    return plivoapi.trigger_send(valid_list, subject + " " + message)
 
-def do_send(numlist, message):
+
+def do_number_parse(numlist):
     """
     Preprocess the list making sure formatting is correct
+    Return a valid list
     """
-
-    liststring = ""
-    invlaid_numbers = 0
+    invalid_list = []
+    valid_list = []
     
     for number in numlist:
+        
         try:
+            
             possible_number = number[0]
             parsed_number = phonenumbers.parse(possible_number, config.DEFAULT_REGION)
+            
             if phonenumbers.is_possible_number(parsed_number):
                 unicode_number = phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
-                unicode_number = unicode_number.replace(' ', '') # replace the spaces
-                unicode_number = unicode_number.replace('+', '') # replace the +
-                unicode_number = unicode_number.replace('-', '') # replace the -
-                liststring += unicode_number + "<"
+                unicode_number = unicode_number.replace(' ', '') # remove the spaces
+                unicode_number = unicode_number.replace('+', '') # remove the +
+                unicode_number = unicode_number.replace('-', '') # remove the -
+                valid_list.append(unicode_number)
             else:
-                invlaid_numbers += 1
-        except:
-            invlaid_numbers+= 1
+                invalid_list.append(number)
+        
+        except IndexError:
+            invalid_list.append(number)
 
-    # Remove the final "<"
-    print("Invalid count " + str(invlaid_numbers))
-    liststring = liststring[:-1]
+    return valid_list
 
-    return plivoapi.trigger_send(liststring, message)
 
-def interactive_send(args):
+def enter_interactive_send(args):
+    """
+    Walk the user through creating and sending a message
+    """
 
     print("--------------------------------------")
-    print("|    "+config.EVENT_NAME+" Notification Platform    |")
+    print("|      SMS Notification Platform     |")
     print("--------------------------------------")
 
+    # ==========================
+    # Determine group to send to
+    # ==========================
+
+    group = None
     if args.group:
         group = args.group
-    else:
-        print("Groups available:")
-        for g in config.GROUPS.keys():
-            print("- " + g)
-        print("--------------------------------------")
+    else:   
+        tries = 0 
+        while group not in config.GROUPS.keys():
+            
+            if tries > 0:
+                print("[!] Group invalid.")
+            tries += 1
+            
+            print("[?] Groups available:")
+            for g in config.GROUPS.keys():
+                print(" - " + g)
+            group = safe_input("Group.....: ")
 
-        group = safe_input("Group.....: ")
-
-    while group not in config.GROUPS.keys():
-        print("Group invalid.")
-        print("Groups available:")
-        for g in config.GROUPS.keys():
-            print(" - " + g)
-        group = safe_input("Group.....: ")
-
-    print("Loading from group...")
-    plist = sheetsapi.get_phone_list(group)
+    print("[*] Loading from group... ")
+    plist = get_group(group)
     count = len(plist)
-    print("Group {grp} loaded with {n} recipient(s)".format(grp=group, n=count))
+    print("[*] Group \"{grp}\" loaded with {n} recipient(s)".format(grp=group, n=count))
 
     if count <= 0:
-        print("No entries in list...")
-        print("Terminating...")
+        print("[!] No entries in list")
+        print("[!] Terminating")
+        exit(1)
+
+    # =======================
+    # Build the message
+    # =======================
 
     if args.message:
         message = args.message
@@ -107,7 +141,7 @@ def interactive_send(args):
     subject = args.subject
 
     print("--------------------------------------")
-    print("""Sending to {grp}:
+    print("""[*] Sending to {grp}:
 
     {subject} {message}
     """.format(
@@ -116,27 +150,43 @@ def interactive_send(args):
         subject=subject,
         message=message))
 
-    cost = count * config.PLIVO_SEND_RATE
+    if config.PROVIDER.lower() == "plivo":
+        cost = plivoapi.calculate_cost(count, message)
+    elif config.PROVIDER.lower() == "twilio":
+        raise NotImplementedError("Twilio not implemented")
+
     print("Count : " + str(count))
     print("Cost  : " + str(cost))
     print("--------------------------------------")
 
+    # ======================
+    # Trigger send
+    # ======================
+
     confirm = safe_input("OK? y/[n] : ") or "n"
 
     if confirm.lower() == "y":
-        print("Queueing...")
-        success = do_send(plist, subject + " " + message)
+        
+        print("[*] Queueing...")
+        success = do_send(plist, subject, message)
+        
         if success:
-            print("Send Queued!")
+            print("[*] Send Queued!")
         else:
-            print("Send Failed.")
+            print("[!] Send Failed!")
     else:
-        print("Terminating...")
+        print("[!] Terminating")
         exit(1)
 
+
 def main():
+    """
+    The entry point for 'hacknotify' command
+    """
+
     args = make_parser()
-    interactive_send(args)
+    enter_interactive_send(args)
+
 
 if __name__ == "__main__": 
     main()

@@ -1,7 +1,21 @@
 import plivo
+import math
 from . import config
 
-def trigger_send(liststring, message):
+def _parse_list(num_list):
+    """
+    takes a list of valid parsed numbers
+    returns a string formatted for plivo
+    separated by <
+    """
+    list_string = ""
+    for num in num_list:
+        list_string += num + "<"
+    
+    # remove the final '<'
+    return list_string[:-1]
+
+def trigger_send(num_list, message):
     """
     Queues the messages.
     Returns the success/fail status.
@@ -13,11 +27,11 @@ def trigger_send(liststring, message):
 
     params = {
         'src': config.PLIVO_SRC, # Sender's phone number with country code
-        'dst' : liststring, # Receivers' phone numbers with country code. The numbers are separated by "<" delimiter.
+        'dst' : _parse_list(num_list), # Receivers' phone numbers with country code. The numbers are separated by "<" delimiter.
         'text' : message # Your SMS Text Message
     }
 
-    response = p.send_message(params)
+    # response = p.send_message(params)
 
     if response[0] >= 200 and response[0] <= 299:
         # 2XX Message.  Probably ok.
@@ -26,3 +40,6 @@ def trigger_send(liststring, message):
         print("Send Failed...")
         print(response)
         return False
+
+def calculate_cost(count, message):
+    return math.ceil(len(message) / 160) * count * config.PLIVO_SEND_RATE
