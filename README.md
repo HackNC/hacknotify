@@ -60,6 +60,7 @@ Do it all from a python interpreter:
 
 ```
 >>> from hacknotify import notify
->>> notify.api_send("hackers", "[TEST2]", "SPAAAAACE")
+>>> group = notify.get_group("group_name")
+>>> notify.do_send(group, "[TEST2]", "SPAAAAACE")
 True
 ```

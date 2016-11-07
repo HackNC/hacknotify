@@ -30,8 +30,16 @@ PLIVO_KEY="CHANGE ME"
 PLIVO_SRC="CHANGE ME" # Your plivo phone number (starting with country code)
 PLIVO_SEND_RATE=0.0035 # Price per message in USD
 
+# TWILIO API INFO
+# Create a TWILIO account to get this info.
+TWILIO_ID="CHANGE ME"
+TWILIO_KEY="CHANGE ME"
+TWILIO_SRC="CHANGE ME" # Your plivo phone number (starting with country code)
+TWILIO_SEND_RATE=0.0035 # Price per message in USD
+
 # For python phonenumbers library
 DEFAULT_REGION = "US"
+
 # For the subject
 EVENT_NAME = "HackNC"
 DEFAULT_SUBJECT = "["+EVENT_NAME+"]"
