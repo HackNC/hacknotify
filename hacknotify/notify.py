@@ -6,15 +6,18 @@ import phonenumbers
 from . import sheetsapi
 from . import plivoapi
 from . import bandwidthapi
+from . import twilioapi
 from . import config
 
 
 def get_provider():
     providers = {
         "plivo":plivoapi,
-        "bandwidth":bandwidthapi
+        "bandwidth":bandwidthapi,
+        "twilio":twilioapi
     }
     return providers[config.PROVIDER]
+
 
 def make_parser():
     parser = argparse.ArgumentParser(description="Send notifications to a list @ HackNC")
@@ -110,10 +113,7 @@ def enter_interactive_send(args):
     print("|      SMS Notification Platform     |")
     print("--------------------------------------")
 
-    # ==========================
     # Determine group to send to
-    # ==========================
-
     group = None
     if args.group:
         group = args.group
@@ -140,10 +140,7 @@ def enter_interactive_send(args):
         print("[!] Terminating")
         exit(1)
 
-    # =======================
     # Build the message
-    # =======================
-
     if args.message:
         message = args.message
     else:
@@ -167,10 +164,7 @@ def enter_interactive_send(args):
     print("Cost  : " + str(cost))
     print("--------------------------------------")
 
-    # ======================
     # Trigger send
-    # ======================
-
     confirm = safe_input("OK? y/[n] : ") or "n"
 
     if confirm.lower() == "y":
@@ -191,7 +185,6 @@ def main():
     """
     The entry point for 'hacknotify' command
     """
-
     args = make_parser()
     enter_interactive_send(args)
 

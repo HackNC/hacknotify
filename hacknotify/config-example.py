@@ -12,9 +12,9 @@ PROVIDER="CHANGE ME"
 # GOOGLE SHEET API INFO
 # Visit https://developers.google.com/sheets/quickstart/python and follow Step 1
 SHEET_APP_NAME = 'CHANGE ME: MY SHEET APP NAME'
-# If your sheet URL is https://docs.google.com/spreadsheets/d/asdfghjklasdfghjklasdfghjkl/edit
-# then your SHEET_ID is 'asdfghjklasdfghjklasdfghjkl'
-SHEET_ID = 'CHANGE ME: asdfghjklasdfghjklasdfghjkl'
+# If your sheet URL is https://docs.google.com/spreadsheets/d/qwertyuiopasdfghjkl1234567890/edit
+# then your SHEET_ID is 'qwertyuiopasdfghjkl1234567890'
+SHEET_ID = 'CHANGE ME: qwertyuiopasdfghjkl1234567890'
 
 # Pair your google sheet data with your group names.
 GROUPS = {
@@ -36,7 +36,7 @@ PLIVO_KEY="CHANGE ME"
 PLIVO_SRC="CHANGE ME" # Your plivo phone number (starting with country code)
 PLIVO_SEND_RATE=0.0035 # Price per message in USD
 
-# TWILIO API INFO - NOT YET SUPPORTED
+# TWILIO API INFO
 # Create a TWILIO account to get this info.
 TWILIO_ID="CHANGE ME"
 TWILIO_KEY="CHANGE ME"
