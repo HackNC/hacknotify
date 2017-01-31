@@ -11,6 +11,7 @@ setup(name='HackNC Notify',
       },
       packages=['hacknotify'],
       install_requires=[
+        'google-api-python-client==1.5.3',
         'httplib2==0.9.2',
         'lxml==3.7.2',
         'oauth2client==3.0.0',
