@@ -65,3 +65,31 @@ Do it all from a python interpreter:
 >>> notify.do_send(group, "[TEST2]", "SPAAAAACE")
 True
 ```
+
+Example console output:
+```
+--------------------------------------
+|      SMS Notification Platform     |
+--------------------------------------
+[?] Groups available:
+ - red
+ - blue
+ - hackers
+ - sponsors
+ - mentors
+Group.....: mentors
+[*] Loading from group... 
+[*] Group "mentors" loaded with 1 recipient(s)
+Message...: THIS WAS A TRIUMPH
+--------------------------------------
+[*] Sending to mentors:
+
+    [HackNC] THIS WAS A TRIUMPH
+    
+Count : 1
+Cost  : 0.005
+--------------------------------------
+OK? y/[n] : y
+[*] Queueing...
+[*] Send Queued!
+```
