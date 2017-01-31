@@ -2,3 +2,4 @@
 venv/
 client_secret.json
 config.py
+*.egg-info

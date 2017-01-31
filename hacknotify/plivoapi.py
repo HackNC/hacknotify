@@ -37,7 +37,6 @@ def trigger_send(num_list, message):
         # 2XX Message.  Probably ok.
         return True
     else:
-        print("Send Failed...")
         print(response)
         return False
 

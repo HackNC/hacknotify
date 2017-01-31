@@ -5,8 +5,16 @@ import phonenumbers
 
 from . import sheetsapi
 from . import plivoapi
+from . import bandwidthapi
 from . import config
 
+
+def get_provider():
+    providers = {
+        "plivo":plivoapi,
+        "bandwidth":bandwidthapi
+    }
+    return providers[config.PROVIDER]
 
 def make_parser():
     parser = argparse.ArgumentParser(description="Send notifications to a list @ HackNC")
@@ -48,7 +56,7 @@ def get_group(group_name):
     return sheetsapi.get_phone_list(group_name)
 
 
-def do_send(dirty_list, subject, message):
+def do_send(provider, dirty_list, subject, message):
     """
     API call for sending from code
     :param group: a string group name from config
@@ -57,7 +65,7 @@ def do_send(dirty_list, subject, message):
     :return: True/False for success/fail
     """
     valid_list = do_number_parse(dirty_list)
-    return plivoapi.trigger_send(valid_list, subject + " " + message)
+    return provider.trigger_send(valid_list, subject + " " + message)
 
 
 def do_number_parse(numlist):
@@ -94,6 +102,9 @@ def enter_interactive_send(args):
     """
     Walk the user through creating and sending a message
     """
+
+    # Set up the messaging provider.
+    provider = get_provider()
 
     print("--------------------------------------")
     print("|      SMS Notification Platform     |")
@@ -150,10 +161,7 @@ def enter_interactive_send(args):
         subject=subject,
         message=message))
 
-    if config.PROVIDER.lower() == "plivo":
-        cost = plivoapi.calculate_cost(count, message)
-    elif config.PROVIDER.lower() == "twilio":
-        raise NotImplementedError("Twilio not implemented")
+    cost = provider.calculate_cost(count, message)
 
     print("Count : " + str(count))
     print("Cost  : " + str(cost))
@@ -168,7 +176,7 @@ def enter_interactive_send(args):
     if confirm.lower() == "y":
         
         print("[*] Queueing...")
-        success = do_send(plist, subject, message)
+        success = do_send(provider, plist, subject, message)
         
         if success:
             print("[*] Send Queued!")
