@@ -5,7 +5,7 @@
 This project leverages the following APIs:
 
 * Google Sheets
-* Plivo
+* Plivo or Bandwidth SDK
 
 # Installation
 
@@ -13,6 +13,7 @@ This project leverages the following APIs:
 
 * Python 3
 * A google account with access to a correctly formatted google sheet.
+* API Credit with either Bandwidth.com or Plivo (Bandwidth recommended)
 
 ### Google API setup
 
@@ -34,7 +35,7 @@ git clone git@github.com:hacknc/hacknotify
 cd hacknotify
 ```
 
-Create a copy of `config-example.py` called `config.py` and get the necessary information and API keys.
+Create a copy of `config-example.py` called `config.py` and get the necessary information and API keys from your chosen service.
 
 ```
 pip3 install -e .
