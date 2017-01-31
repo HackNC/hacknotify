@@ -5,7 +5,7 @@
 This project leverages the following APIs:
 
 * Google Sheets
-* Plivo or Bandwidth SDK
+* Plivo, Bandwidth SDK, or Twilio
 
 # Installation
 
@@ -13,7 +13,7 @@ This project leverages the following APIs:
 
 * Python 3
 * A google account with access to a correctly formatted google sheet.
-* API Credit with either Bandwidth.com or Plivo (Bandwidth recommended)
+* API Credit with a Bandwidth.com, Plivo, or Twilio account.  (Bandwidth recommended)
 
 ### Google API setup
 

@@ -27,6 +27,9 @@ setup(name='HackNC Notify',
         'rsa==3.4.2',
         'simplejson==3.8.2',
         'six==1.10.0',
-        'uritemplate==0.6'
+        'uritemplate==0.6',
+        'pysocks==1.6.6',
+        'pytz==2016.10',
+        'twilio==5.7.0'
       ],
      )
