@@ -3,6 +3,22 @@ from bandwidth_sdk import Message
 from bandwidth_sdk import Client
 from . import config
 
+def chunks(l, n):
+    """Yield successive n-sized chunks from l."""
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+def _send_50_this_is_trash(send_from_number, num_list, message):
+    sender = Message.send_batch()
+
+    for num in num_list:
+        # Bandwidth likes the leading '+'
+        sender.push_message(send_from_number, '+' + num, message)
+
+    sender.execute()
+
+    return sender
+
 
 def trigger_send(num_list, message):
     """
@@ -15,17 +31,15 @@ def trigger_send(num_list, message):
     if not '+' in send_from_number:
         send_from_number = '+' + send_from_number
 
-    sender = Message.send_batch()
-    for num in num_list:
-        # Bandwidth likes the leading '+'
-        sender.push_message(config.BW_SRC, '+' + num, message)
+    chks = chunks(num_list, 40)
 
-    sender.execute()
-
-    if sender.errors:
-        for e in sender.errors:
-            print("BW ERROR:" + str(e))
-        return False
+    for l in chks:
+        sender = _send_50_this_is_trash(send_from_number, l, message)
+        if sender.errors:
+            for e in sender.errors:
+                print("BW ERROR:" + str(e))
+            return False
+    
     return True
 
 def calculate_cost(count, message):
