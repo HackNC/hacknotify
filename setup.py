@@ -29,6 +29,7 @@ setup(name='HackNC Notify',
         'uritemplate==0.6',
         'pysocks==1.6.6',
         'pytz==2016.10',
-        'twilio==5.7.0'
+        'twilio==5.7.0',
+        'bandwidth-sdk==2.0.0b0'
       ],
      )

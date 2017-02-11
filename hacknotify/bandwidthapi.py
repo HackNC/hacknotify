@@ -1,6 +1,5 @@
 import math
-from bandwidth_sdk import Message
-from bandwidth_sdk import Client
+import bandwidth
 from . import config
 
 def chunks(l, n):
@@ -8,17 +7,21 @@ def chunks(l, n):
     for i in range(0, len(l), n):
         yield l[i:i + n]
 
-def _send_50_this_is_trash(send_from_number, num_list, message):
-    sender = Message.send_batch()
+def _send_50(api, send_from_number, num_list, message):
+
+    sendlist = []
 
     for num in num_list:
         # Bandwidth likes the leading '+'
         if len(num) == 10:
-            sender.push_message(send_from_number, '+' + num, message)
+            sendlist.append({
+                "from": send_from_number,
+                "to": num,
+                "text": message
+            })
 
-    sender.execute()
-
-    return sender
+    results = api.send_message(sendlist)
+    sleep(2)
 
 
 def trigger_send(num_list, message):
@@ -26,7 +29,7 @@ def trigger_send(num_list, message):
     Queues the messages.
     Returns the success/fail status.
     """
-    bw_client = Client(config.BW_USERNAME, config.BW_ID, config.BW_KEY)
+    api = bandwidth.client('catapult', config.BW_USERNAME, config.BW_ID, config.BW_KEY)
 
     send_from_number = config.BW_SRC
     if not '+' in send_from_number:
@@ -35,11 +38,7 @@ def trigger_send(num_list, message):
     chks = chunks(num_list, 40)
 
     for l in chks:
-        sender = _send_50_this_is_trash(send_from_number, l, message)
-        if sender.errors:
-            for e in sender.errors:
-                print("BW ERROR:" + str(e))
-            # return False
+        _send_50(api, send_from_number, l, message)
     
     return True
 
