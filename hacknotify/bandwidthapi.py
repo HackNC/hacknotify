@@ -13,15 +13,15 @@ def _send_50(api, send_from_number, num_list, message):
 
     for num in num_list:
         # Bandwidth likes the leading '+'
-        if len(num) == 10:
+        if len(num) == 11:
             sendlist.append({
                 "from": send_from_number,
                 "to": num,
                 "text": message
             })
 
-    results = api.send_message(sendlist)
-    sleep(2)
+    results = api.send_messages(sendlist)
+    time.sleep(2)
 
 
 def trigger_send(num_list, message):
