@@ -13,7 +13,8 @@ def _send_50_this_is_trash(send_from_number, num_list, message):
 
     for num in num_list:
         # Bandwidth likes the leading '+'
-        sender.push_message(send_from_number, '+' + num, message)
+        if len(num) == 10:
+            sender.push_message(send_from_number, '+' + num, message)
 
     sender.execute()
 
@@ -38,7 +39,7 @@ def trigger_send(num_list, message):
         if sender.errors:
             for e in sender.errors:
                 print("BW ERROR:" + str(e))
-            return False
+            # return False
     
     return True
 
